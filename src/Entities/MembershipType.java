@@ -6,7 +6,7 @@ public class MembershipType {
 
     private long id;
     private String name;
-    private Integer durationDays;   // может быть null (visited-based)
+    private Integer durationDays;
     private BigDecimal price;
 
     public MembershipType() {}

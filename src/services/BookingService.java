@@ -49,7 +49,7 @@ public class BookingService {
         bookings.insert(memberId, classId);
     }
 
-    // user story: attendance history
+
     public List<String> history(long memberId) throws SQLException {
         return bookings.historyLines(memberId);
     }

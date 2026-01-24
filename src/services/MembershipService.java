@@ -27,7 +27,7 @@ public class MembershipService {
 
         Integer days = t.getDurationDays();
 
-        // visited-based: без срока
+
         if (days == null) {
             members.updateMembership(memberId, membershipTypeId, null);
             return;
