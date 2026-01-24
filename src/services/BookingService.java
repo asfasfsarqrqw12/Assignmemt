@@ -2,55 +2,77 @@ package services;
 
 import Entities.FitnessClass;
 import Entities.Member;
-import Exceptions.BookingAlreadyExistsException;
-import Exceptions.ClassFullException;
-import Exceptions.MembershipExpiredException;
 import Repositories.ClassBookingRepository;
 import Repositories.FitnessClassRepository;
 import Repositories.MemberRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookingService {
 
-    private final MemberRepository members;
-    private final FitnessClassRepository classes;
-    private final ClassBookingRepository bookings;
+    private final MemberRepository memberRepo;
+    private final FitnessClassRepository classRepo;
+    private final ClassBookingRepository bookingRepo;
 
-    public BookingService(MemberRepository members, FitnessClassRepository classes, ClassBookingRepository bookings) {
-        this.members = members;
-        this.classes = classes;
-        this.bookings = bookings;
+    public BookingService(MemberRepository memberRepo,
+                          FitnessClassRepository classRepo,
+                          ClassBookingRepository bookingRepo) {
+        this.memberRepo = memberRepo;
+        this.classRepo = classRepo;
+        this.bookingRepo = bookingRepo;
     }
 
     public void book(long memberId, long classId)
-            throws SQLException, MembershipExpiredException, ClassFullException, BookingAlreadyExistsException {
+            throws Exceptions.BookingAlreadyExistsException,
+            Exceptions.ClassFullException,
+            Exceptions.MembershipExpiredException,
+            SQLException {
 
-        Member m = members.findById(memberId);
-        if (m == null) throw new IllegalArgumentException("Member not found");
 
-        if (m.getMembershipEndDate() != null && m.getMembershipEndDate().isBefore(LocalDate.now())) {
-            throw new MembershipExpiredException("Membership expired");
+        Member m = memberRepo.findById(memberId);
+        if (m == null) throw new IllegalArgumentException("Member not found: " + memberId);
+
+
+        LocalDate end = m.getMembershipEndDate();
+        if (end == null || end.isBefore(LocalDate.now())) {
+            throw new Exceptions.MembershipExpiredException("Membership expired");
         }
 
-        FitnessClass c = classes.findById(classId);
-        if (c == null) throw new IllegalArgumentException("Class not found");
 
-        if (bookings.exists(memberId, classId)) {
-            throw new BookingAlreadyExistsException("Booking already exists");
+        FitnessClass fc = classRepo.findById(classId);
+        if (fc == null) throw new IllegalArgumentException("Class not found: " + classId);
+
+
+        int booked = bookingRepo.countBookingsForClass(classId);
+        if (booked >= fc.getCapacity()) {
+            throw new Exceptions.ClassFullException("Class is full");
         }
 
-        if (bookings.countByClassId(classId) >= c.getCapacity()) {
-            throw new ClassFullException("Class is full");
-        }
 
-        bookings.insert(memberId, classId);
+        bookingRepo.create(memberId, classId);
     }
 
-
     public List<String> history(long memberId) throws SQLException {
-        return bookings.historyLines(memberId);
+
+        var bookings = bookingRepo.findByMemberId(memberId);
+
+        List<String> out = new ArrayList<>();
+        for (var b : bookings) {
+            FitnessClass fc = classRepo.findById(b.getClassId());
+            String title = (fc == null ? "unknown" : fc.getTitle());
+            String coach = (fc == null ? "unknown" : fc.getCoachName());
+            String start = (fc == null || fc.getStartTime() == null) ? "null" : fc.getStartTime().toString();
+            String bookedAt = (b.getBookedAt() == null) ? "null" : b.getBookedAt().toString();
+
+            out.add("booking#" + b.getId()
+                    + " | " + title
+                    + " | coach=" + coach
+                    + " | start=" + start
+                    + " | booked=" + bookedAt);
+        }
+        return out;
     }
 }
