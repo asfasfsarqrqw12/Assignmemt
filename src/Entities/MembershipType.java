@@ -1,17 +1,45 @@
 package Entities;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 
 public class MembershipType {
-    private String type;
-    private LocalDate expiryDate;
 
-    public MembershipType(String type, LocalDate expiryDate) {
-        this.type = type;
-        this.expiryDate = expiryDate;
+    private long id;
+    private String name;
+    private Integer durationDays;   // может быть null (visited-based)
+    private BigDecimal price;
+
+    public MembershipType() {}
+
+    public long getId() {
+        return id;
     }
 
-    public boolean isExpired() {
-        return expiryDate.isBefore(LocalDate.now());
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getDurationDays() {
+        return durationDays;
+    }
+
+    public void setDurationDays(Integer durationDays) {
+        this.durationDays = durationDays;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }
