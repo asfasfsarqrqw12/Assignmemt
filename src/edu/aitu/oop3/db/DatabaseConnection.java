@@ -7,17 +7,13 @@ import java.util.Properties;
 
 public class DatabaseConnection {
 
-    // ВАЖНО:
-    // HOST должен быть pooler: aws-...pooler.supabase.com
-    // DB обычно: postgres
-    // USER должен быть вида: postgres.<project-ref>  (как в Supabase -> Connect -> Session pooler)
+   
     private static final String HOST = "aws-1-ap-southeast-2.pooler.supabase.com";
     private static final int PORT = 5432;
     private static final String DB = "postgres";
 
-    private static final String USER = "postgres.inemvmgmvphsjkybiwmu"; // <-- твой user из Supabase
-    private static final String PASSWORD = "iORK1lHFMs5VRR4w"; // <-- пароль из Supabase (НЕ придумывать)
-
+    private static final String USER = "postgres.inemvmgmvphsjkybiwmu"; 
+    private static final String PASSWORD = "iORK1lHFMs5VRR4w"; 
     private static final String URL =
             "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB;
 
