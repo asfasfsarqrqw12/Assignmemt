@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseConnection {
-
+ 
    
     private static final String HOST = "aws-1-ap-southeast-2.pooler.supabase.com";
     private static final int PORT = 5432;
