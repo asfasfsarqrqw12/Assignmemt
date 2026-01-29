@@ -11,7 +11,8 @@ public class JdbcFitnessClassRepository implements FitnessClassRepository {
 
     @Override
     public FitnessClass findById(long id) throws SQLException {
-        String sql = "SELECT id, title, coach_name, start_time, capacity FROM classes WHERE id = ?";
+        String sql = "SELECT id, title, coach_name, start_time, capacity FROM fitness_classes WHERE id = ?";
+
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
