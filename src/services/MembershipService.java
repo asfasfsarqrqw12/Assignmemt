@@ -17,7 +17,7 @@ public class MembershipService {
         this.types = types;
     }
 
-    // User story: buy/extend membership
+
     public void buyOrExtend(long memberId, long membershipTypeId) throws SQLException {
         Member m = members.findById(memberId);
         if (m == null) throw new IllegalArgumentException("Member not found: " + memberId);
