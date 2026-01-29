@@ -46,6 +46,7 @@ public class Main {
             }
 
 
+
             try {
                 bookingService.book(memberId, classId);
                 System.out.println("Class booked (second time) - SHOULD NOT HAPPEN");
