@@ -23,7 +23,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            // 23505 = unique_violation in Postgres (member_id, class_id unique)
+
             if ("23505".equals(e.getSQLState())) {
                 throw new Exceptions.BookingAlreadyExistsException("Booking already exists");
             }
