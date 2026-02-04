@@ -23,7 +23,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-
+            
             if ("23505".equals(e.getSQLState())) {
                 throw new Exceptions.BookingAlreadyExistsException("Booking already exists");
             }
