@@ -5,6 +5,7 @@ import Entities.Member;
 import Repositories.ClassBookingRepository;
 import Repositories.FitnessClassRepository;
 import Repositories.MemberRepository;
+import utils.Filter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -31,41 +32,45 @@ public class BookingService {
             Exceptions.MembershipExpiredException,
             SQLException {
 
-
         Member m = memberRepo.findById(memberId);
-        if (m == null) throw new IllegalArgumentException("Member not found: " + memberId);
-
+        if (m == null) {
+            throw new IllegalArgumentException("Member not found: " + memberId);
+        }
 
         LocalDate end = m.getMembershipEndDate();
         if (end == null || end.isBefore(LocalDate.now())) {
             throw new Exceptions.MembershipExpiredException("Membership expired");
         }
 
-
         FitnessClass fc = classRepo.findById(classId);
-        if (fc == null) throw new IllegalArgumentException("Class not found: " + classId);
-
+        if (fc == null) {
+            throw new IllegalArgumentException("Class not found: " + classId);
+        }
 
         int booked = bookingRepo.countBookingsForClass(classId);
         if (booked >= fc.getCapacity()) {
             throw new Exceptions.ClassFullException("Class is full");
         }
 
-
         bookingRepo.create(memberId, classId);
     }
 
     public List<String> history(long memberId) throws SQLException {
-
         var bookings = bookingRepo.findByMemberId(memberId);
 
         List<String> out = new ArrayList<>();
         for (var b : bookings) {
             FitnessClass fc = classRepo.findById(b.getClassId());
-            String title = (fc == null ? "unknown" : fc.getTitle());
-            String coach = (fc == null ? "unknown" : fc.getCoachName());
-            String start = (fc == null || fc.getStartTime() == null) ? "null" : fc.getStartTime().toString();
-            String bookedAt = (b.getBookedAt() == null) ? "null" : b.getBookedAt().toString();
+
+            String title = (fc == null) ? "unknown" : fc.getTitle();
+            String coach = (fc == null) ? "unknown" : fc.getCoachName();
+            String start = (fc == null || fc.getStartTime() == null)
+                    ? "null"
+                    : fc.getStartTime().toString();
+
+            String bookedAt = (b.getBookedAt() == null)
+                    ? "null"
+                    : b.getBookedAt().toString();
 
             out.add("booking#" + b.getId()
                     + " | " + title
@@ -74,5 +79,13 @@ public class BookingService {
                     + " | booked=" + bookedAt);
         }
         return out;
+    }
+
+
+    public List<FitnessClass> filterClasses(Filter<FitnessClass> filter) throws SQLException {
+        return classRepo.findAll()
+                .stream()
+                .filter(filter::test)
+                .toList();
     }
 }
