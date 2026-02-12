@@ -1,4 +1,4 @@
-package Membership;
+package components.membership.Membership;
 
 import java.time.LocalDate;
 

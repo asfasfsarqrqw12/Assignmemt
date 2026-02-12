@@ -1,4 +1,4 @@
-package Repositories;
+package components.membership;
 
 import Entities.MembershipType;
 import java.sql.SQLException;

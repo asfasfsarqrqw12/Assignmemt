@@ -14,7 +14,7 @@ public class JdbcFitnessClassRepository implements FitnessClassRepository {
     public FitnessClass findById(long id) throws SQLException {
         String sql = "SELECT id, title, coach_name, start_time, capacity FROM fitness_classes WHERE id = ?";
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, id);
@@ -42,7 +42,7 @@ public class JdbcFitnessClassRepository implements FitnessClassRepository {
         String sql = "SELECT id, title, coach_name, start_time, capacity FROM fitness_classes ORDER BY start_time";
         List<FitnessClass> classes = new ArrayList<>();
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 

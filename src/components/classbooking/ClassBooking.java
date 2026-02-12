@@ -1,4 +1,4 @@
-package Entities;
+package components.classbooking;
 
 import java.time.LocalDateTime;
 

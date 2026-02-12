@@ -1,11 +1,9 @@
-package Repositories.jdbc;
+package components.classbooking;
 
-import Entities.ClassBooking;
-import Repositories.ClassBookingRepository;
 import edu.aitu.oop3.db.DatabaseConnection;
+import Exceptions.BookingAlreadyExistsException;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +13,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
     public void create(long memberId, long classId) throws SQLException {
         String sql = "INSERT INTO class_bookings (member_id, class_id) VALUES (?, ?)";
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, memberId);
@@ -23,9 +21,9 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            
+
             if ("23505".equals(e.getSQLState())) {
-                throw new Exceptions.BookingAlreadyExistsException("Booking already exists");
+                throw new BookingAlreadyExistsException("Booking already exists");
             }
             throw e;
         }
@@ -35,7 +33,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
     public boolean exists(long memberId, long classId) throws SQLException {
         String sql = "SELECT 1 FROM class_bookings WHERE member_id = ? AND class_id = ? LIMIT 1";
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, memberId);
@@ -51,7 +49,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
     public int countBookingsForClass(long classId) throws SQLException {
         String sql = "SELECT COUNT(*) AS c FROM class_bookings WHERE class_id = ?";
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, classId);
@@ -69,7 +67,7 @@ public class JdbcClassBookingRepository implements ClassBookingRepository {
 
         List<ClassBooking> list = new ArrayList<>();
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, memberId);

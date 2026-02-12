@@ -1,7 +1,6 @@
-package Repositories.jdbc;
+package components.membership;
 
 import Entities.MembershipType;
-import Repositories.MembershipTypeRepository;
 import edu.aitu.oop3.db.DatabaseConnection;
 
 import java.math.BigDecimal;
@@ -16,7 +15,7 @@ public class JdbcMembershipTypeRepository implements MembershipTypeRepository {
     public MembershipType findById(long id) throws SQLException {
         String sql = "SELECT id, name, duration_days, price FROM membership_types WHERE id = ?";
 
-        try (Connection con = DatabaseConnection.getConnection();
+        try (Connection con = DatabaseConnection.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, id);

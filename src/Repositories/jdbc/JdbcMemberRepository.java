@@ -19,7 +19,7 @@
             String sql = "SELECT id, full_name, phone, membership_type_id, membership_end_date " +
                     "FROM members WHERE id = ?";
 
-            try (Connection con = DatabaseConnection.getConnection();
+            try (Connection con = DatabaseConnection.getInstance().getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
 
                 ps.setLong(1, id);
@@ -45,7 +45,7 @@
         public void updateMembership(long memberId, long membershipTypeId, LocalDate endDate) throws SQLException {
             String sql = "UPDATE members SET membership_type_id = ?, membership_end_date = ? WHERE id = ?";
 
-            try (Connection con = DatabaseConnection.getConnection();
+            try (Connection con = DatabaseConnection.getInstance().getConnection();
                  PreparedStatement ps = con.prepareStatement(sql)) {
 
                 ps.setLong(1, membershipTypeId);

@@ -5,26 +5,46 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseConnection {
+public final class DatabaseConnection {
 
-    private static final String HOST = "aws-1-ap-south-1.pooler.supabase.com"; 
-    private static final int PORT = 5432;
-    private static final String DB = "postgres";
+    private static volatile DatabaseConnection instance;
 
-    private static final String USER = "postgres.wwxfjgpoiwamoawhdiia"; 
-    private static final String PASSWORD = "queen.007Aish";
+    private final String url;
+    private final Properties props;
 
-    private static final String URL = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB;
+    private DatabaseConnection() {
 
-    public static Connection getConnection() throws SQLException {
-        Properties props = new Properties();
-        props.setProperty("user", USER);
-        props.setProperty("password", PASSWORD);
-        props.setProperty("sslmode", "require"); 
+        String host = env("DB_HOST", "aws-1-ap-south-1.pooler.supabase.com");
+        String port = env("DB_PORT", "5432");
+        String db   = env("DB_NAME", "postgres");
 
-        System.out.println("Connecting as USER=" + USER + " via Session Pooler");
-        return DriverManager.getConnection(URL, props);
+        String user = env("DB_USER", "");
+        String pass = env("DB_PASSWORD", "");
+
+        this.url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
+
+        this.props = new Properties();
+        props.setProperty("user", user);
+        props.setProperty("password", pass);
+        props.setProperty("sslmode", env("DB_SSLMODE", "require"));
+    }
+
+    private static String env(String key, String def) {
+        String v = System.getenv(key);
+        return (v == null || v.isBlank()) ? def : v;
+    }
+
+
+    public static DatabaseConnection getInstance() {
+        if (instance == null) {
+            synchronized (DatabaseConnection.class) {
+                if (instance == null) instance = new DatabaseConnection();
+            }
+        }
+        return instance;
+    }
+
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, props);
     }
 }
-
-

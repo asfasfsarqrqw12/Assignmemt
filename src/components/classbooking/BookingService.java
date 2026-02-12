@@ -1,8 +1,7 @@
-package services;
+package components.classbooking;
 
 import Entities.FitnessClass;
 import Entities.Member;
-import Repositories.ClassBookingRepository;
 import Repositories.FitnessClassRepository;
 import Repositories.MemberRepository;
 import utils.Filter;
@@ -39,7 +38,7 @@ public class BookingService {
 
         LocalDate end = m.getMembershipEndDate();
         if (end == null || end.isBefore(LocalDate.now())) {
-            throw new Exceptions.MembershipExpiredException("Membership expired");
+            throw new Exceptions.MembershipExpiredException("components.membership.Membership expired");
         }
 
         FitnessClass fc = classRepo.findById(classId);

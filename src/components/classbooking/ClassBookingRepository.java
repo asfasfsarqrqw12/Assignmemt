@@ -1,6 +1,5 @@
-package Repositories;
+package components.classbooking;
 
-import Entities.ClassBooking;
 import java.sql.SQLException;
 import java.util.List;
 

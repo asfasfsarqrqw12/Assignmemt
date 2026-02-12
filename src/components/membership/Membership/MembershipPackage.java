@@ -1,9 +1,9 @@
-package Membership;
+package components.membership.Membership;
 
 public class MembershipPackage {
-    private final String type;
-    private final Integer durationDays; 
-    private final Integer visitLimit;   
+    private final String type;      // "monthly" | "yearly" | "visit"
+    private final Integer durationDays; // null для visit-based если хочешь
+    private final Integer visitLimit;   // для visit-based
     private final double price;
 
     private MembershipPackage(Builder b) {

@@ -32,3 +32,5 @@ bin/
 .idea/
 .idea/*.xml
 
+config.properties
+
